@@ -1,7 +1,9 @@
 package texttemplate
 
+import "github.com/herb-go/herbtext"
+
 type Engine interface {
-	ApplyOptions(*Options) error
-	Parse(string, *Options) (View, error)
-	Supported() ([]string, error)
+	ApplyOptions(*herbtext.Environment) error
+	Parse(template string, env *herbtext.Environment) (View, error)
+	Supported() (directives []string, err error)
 }

@@ -1,5 +1,6 @@
 package texttemplate
 
 type View interface {
-	Render(interface{}) (string, error)
+	Render(data interface{}) (output string, err error)
+	Supported() (directives []string, err error)
 }
