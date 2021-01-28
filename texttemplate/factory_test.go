@@ -1,11 +1,26 @@
 package texttemplate
 
-import "testing"
+import (
+	"testing"
+
+	"github.com/herb-go/herbtext"
+)
+
+type nopEngine struct {
+}
+
+//Parse parse given template with given environment to template view.
+func (nopEngine) Parse(template string, env herbtext.Environment) (View, error) {
+	return nil, nil
+}
+
+//Supported return supported directives which can be used in template string.
+func (nopEngine) Supported(env herbtext.Environment) (directives []string, err error) {
+	return nil, nil
+}
 
 func RegisterNullFactory() {
-	Register("null", func(loader func(v interface{}) error) (Engine, error) {
-		return nil, nil
-	})
+	Register("null", nopEngine{})
 }
 
 func TestFactory(t *testing.T) {
@@ -52,7 +67,7 @@ func TestDupFactory(t *testing.T) {
 }
 
 func TestUnknownFactory(t *testing.T) {
-	d, err := NewEngine("unknown", nil)
+	d, err := GetEngine("unknown")
 	if d != nil || err == nil {
 		t.Fatal(d, err)
 	}
@@ -63,12 +78,8 @@ func TestNull(t *testing.T) {
 		UnregisterAll()
 	}()
 	RegisterNullFactory()
-	c := Config{
-		Engine:       "null",
-		EngineConfig: nil,
-	}
-	engine, err := c.NewEngine()
-	if err != nil || engine != nil {
+	engine, err := GetEngine("null")
+	if err != nil || engine == nil {
 		t.Fatal(err)
 	}
 }

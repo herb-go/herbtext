@@ -7,57 +7,54 @@ import (
 	"sync"
 )
 
-//Factory engine factory
-type Factory func(loader func(v interface{}) error) (Engine, error)
-
 var (
-	factorysMu sync.RWMutex
-	factories  = make(map[string]Factory)
+	enginesMu sync.RWMutex
+	engines   = make(map[string]Engine)
 )
 
-// Register makes a engine creator available by the provided name.
+// Register makes a engine available by the provided name.
 // If Register is called twice with the same name or if driver is nil,
 // it panics.
-func Register(name string, f Factory) {
-	factorysMu.Lock()
-	defer factorysMu.Unlock()
-	if f == nil {
-		panic(errors.New("texttemplate: Register delivery factory is nil"))
+func Register(name string, e Engine) {
+	enginesMu.Lock()
+	defer enginesMu.Unlock()
+	if e == nil {
+		panic(errors.New("texttemplate: Register engine is nil"))
 	}
-	if _, dup := factories[name]; dup {
+	if _, dup := engines[name]; dup {
 		panic(errors.New("texttemplate: Register called twice for factory " + name))
 	}
-	factories[name] = f
+	engines[name] = e
 }
 
 //UnregisterAll unregister all driver
 func UnregisterAll() {
-	factorysMu.Lock()
-	defer factorysMu.Unlock()
+	enginesMu.Lock()
+	defer enginesMu.Unlock()
 	// For tests.
-	factories = make(map[string]Factory)
+	engines = make(map[string]Engine)
 }
 
 //Factories returns a sorted list of the names of the registered factories.
 func Factories() []string {
-	factorysMu.RLock()
-	defer factorysMu.RUnlock()
+	enginesMu.RLock()
+	defer enginesMu.RUnlock()
 	var list []string
-	for name := range factories {
+	for name := range engines {
 		list = append(list, name)
 	}
 	sort.Strings(list)
 	return list
 }
 
-//NewEngine create new driver with given name loader.
+//GetEngine get new driver bt given name .
 //Reutrn driver created and any error if raised.
-func NewEngine(name string, loader func(v interface{}) error) (Engine, error) {
-	factorysMu.RLock()
-	factoryi, ok := factories[name]
-	factorysMu.RUnlock()
+func GetEngine(name string) (Engine, error) {
+	enginesMu.RLock()
+	factoryi, ok := engines[name]
+	enginesMu.RUnlock()
 	if !ok {
-		return nil, fmt.Errorf("texttemplate: unknown driver %q (forgotten import?)", name)
+		return nil, fmt.Errorf("texttemplate: unknown engine %q (forgotten import?)", name)
 	}
-	return factoryi(loader)
+	return factoryi, nil
 }

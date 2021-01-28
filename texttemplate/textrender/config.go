@@ -3,8 +3,9 @@ package textrender
 import (
 	"fmt"
 
-	"github.com/herb-go/herbtext"
 	"github.com/herb-go/herbtext/texttemplate"
+
+	"github.com/herb-go/herbtext"
 )
 
 type LoaderConfig struct {
@@ -36,12 +37,12 @@ func (c *LoaderSetConfig) CreateLoaderSet(env herbtext.Environment) (LoaderSet, 
 }
 
 type TemplatesConfig struct {
-	texttemplate.Config
+	Engine    string
 	Tempaltes Templates
 }
 
 func (c *TemplatesConfig) CreateViews(env herbtext.Environment) (*Views, error) {
-	e, err := c.Config.NewEngine()
+	e, err := texttemplate.GetEngine(c.Engine)
 	if err != nil {
 		return nil, err
 	}
