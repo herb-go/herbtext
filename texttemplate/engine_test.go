@@ -23,17 +23,17 @@ func RegisterNullFactory() {
 	Register("null", nopEngine{})
 }
 
-func TestFactory(t *testing.T) {
+func TestEngines(t *testing.T) {
 	defer func() {
 		UnregisterAll()
 	}()
 	UnregisterAll()
-	fs := Factories()
+	fs := Engines()
 	if len(fs) != 0 {
 		t.Fatal(fs)
 	}
 	RegisterNullFactory()
-	fs = Factories()
+	fs = Engines()
 	if len(fs) != 1 {
 		t.Fatal(fs)
 	}
