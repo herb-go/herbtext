@@ -1,7 +1,6 @@
 package textrender
 
 import (
-	"github.com/herb-go/herbtext"
 	"github.com/herb-go/herbtext/texttemplate"
 )
 
@@ -25,19 +24,4 @@ func (views *Views) Render(ds Dataset) (*Outputs, error) {
 		}
 	}
 	return &outputs, nil
-}
-
-func Parse(engine texttemplate.Engine, env herbtext.Environment, t *Templates) (*Views, error) {
-	views := make(Views, len(*t))
-	for k, v := range *t {
-		view, err := engine.Parse(v.Template, env)
-		if err != nil {
-			return nil, err
-		}
-		views[k] = &View{
-			Key:  v.Key,
-			View: view,
-		}
-	}
-	return &views, nil
 }

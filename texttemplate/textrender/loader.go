@@ -12,6 +12,12 @@ type Loader struct {
 
 type LoaderSet map[string]*Loader
 
+func (ls LoaderSet) Add(list ...*Loader) {
+	for _, v := range list {
+		ls[v.Source] = v
+	}
+}
+
 func (ls LoaderSet) Load(values *Values) (Dataset, error) {
 	ds := Dataset{}
 	for _, v := range *values {
