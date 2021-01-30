@@ -1,4 +1,4 @@
-package textviewset
+package texttemplateset
 
 import (
 	"github.com/herb-go/herbtext"
@@ -7,7 +7,7 @@ import (
 
 //ParseWithEngineName parse templates with given engine name and herbtext environment.
 //Return views parsed and any error if raised.
-func ParseWithEngineName(templates herbtext.Set, enginename string, env herbtext.Environment) (views Views, err error) {
+func ParseWithEngineName(templates herbtext.Set, enginename string, env herbtext.Environment) (set TemplateSet, err error) {
 	eng, err := texttemplate.GetEngine(enginename)
 	if err != nil {
 		return nil, err
@@ -17,30 +17,30 @@ func ParseWithEngineName(templates herbtext.Set, enginename string, env herbtext
 
 //ParseWith parse templates with given engine and herbtext environment.
 //Return views parsed and any error if raised.
-func ParseWith(templates herbtext.Set, engine texttemplate.Engine, env herbtext.Environment) (views Views, err error) {
-	var view texttemplate.View
-	views = make(Views, templates.Length())
+func ParseWith(templates herbtext.Set, engine texttemplate.Engine, env herbtext.Environment) (set TemplateSet, err error) {
+	var view texttemplate.Template
+	set = make(TemplateSet, templates.Length())
 	templates.Range(func(k, v string) bool {
 		view, err = engine.Parse(v, env)
 		if err != nil {
 			return false
 		}
-		views[k] = view
+		set[k] = view
 		return true
 	})
 	if err != nil {
 		return nil, err
 	}
-	return views, nil
+	return set, nil
 }
 
-//Views views type which can render dataset to output set.
-type Views map[string]texttemplate.View
+//TemplateSet template set type
+type TemplateSet map[string]texttemplate.Template
 
 //Render render given dataset to outout set
-func (views Views) Render(ds texttemplate.Dataset) (herbtext.Map, error) {
-	outputs := make(herbtext.Map, len(views))
-	for k, v := range views {
+func (s TemplateSet) Render(ds texttemplate.Dataset) (herbtext.Map, error) {
+	outputs := make(herbtext.Map, len(s))
+	for k, v := range s {
 		output, err := v.Render(ds)
 		if err != nil {
 			return nil, err

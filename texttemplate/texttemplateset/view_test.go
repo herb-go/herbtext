@@ -1,4 +1,4 @@
-package textviewset_test
+package texttemplateset_test
 
 import (
 	"errors"
@@ -7,7 +7,7 @@ import (
 	"github.com/herb-go/herbtext"
 	_ "github.com/herb-go/herbtext-drivers/engine/handlebars"
 	"github.com/herb-go/herbtext/texttemplate"
-	"github.com/herb-go/herbtext/texttemplate/textviewset"
+	"github.com/herb-go/herbtext/texttemplate/texttemplateset"
 )
 
 var nopErr = errors.New("nop")
@@ -15,7 +15,7 @@ var nopErr = errors.New("nop")
 type testEngine struct{}
 
 //Parse parse given template with given environment to template view.
-func (testEngine) Parse(template string, env herbtext.Environment) (texttemplate.View, error) {
+func (testEngine) Parse(template string, env herbtext.Environment) (texttemplate.Template, error) {
 	return nil, nopErr
 }
 
@@ -30,7 +30,7 @@ func TestView(t *testing.T) {
 	data := texttemplate.Dataset{}
 	data["testkey1"] = "testvalue1"
 	data["testkey2"] = "testvalue2"
-	views, err := textviewset.ParseWithEngineName(templates, "handlebars", herbtext.DefaultEnvironment())
+	views, err := texttemplateset.ParseWithEngineName(templates, "handlebars", herbtext.DefaultEnvironment())
 	if err != nil {
 		panic(err)
 	}
@@ -41,7 +41,7 @@ func TestView(t *testing.T) {
 	if outputs.Get("template1") != "testvalue1" || outputs.Get("template2") != "testvalue2" {
 		t.Fatal(outputs)
 	}
-	views, err = textviewset.ParseWith(templates, testEngine{}, herbtext.DefaultEnvironment())
+	views, err = texttemplateset.ParseWith(templates, testEngine{}, herbtext.DefaultEnvironment())
 	if err != nopErr || views != nil {
 		t.Fatal(views, err)
 	}
