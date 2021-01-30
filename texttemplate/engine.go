@@ -12,13 +12,13 @@ import (
 //Engine engine interface
 type Engine interface {
 	//Parse parse given template with given environment to template view.
-	Parse(template string, env herbtext.Environment) (View, error)
+	Parse(template string, env herbtext.Environment) (Template, error)
 	//Supported return supported directives which can be used in template string.
 	Supported(env herbtext.Environment) (directives []string, err error)
 }
 
 //Parse parse given template with given engine name and environment to template view.
-func Parse(enginename string, template string, env herbtext.Environment) (View, error) {
+func Parse(enginename string, template string, env herbtext.Environment) (Template, error) {
 	e, err := GetEngine(enginename)
 	if err != nil {
 		return nil, err

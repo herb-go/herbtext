@@ -10,7 +10,7 @@ type nopEngine struct {
 }
 
 //Parse parse given template with given environment to template view.
-func (nopEngine) Parse(template string, env herbtext.Environment) (View, error) {
+func (nopEngine) Parse(template string, env herbtext.Environment) (Template, error) {
 	return nil, nil
 }
 
