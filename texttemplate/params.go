@@ -10,6 +10,11 @@ type Param struct {
 	Target string
 	//Source values key which data to parsed loaded from
 	Source string
+	//Constant constant value.
+	//Data will use constant instead of loading form source if not empty.
+	Constant string
+	//Required if param is required
+	Required bool
 	//Parser data parsers
 	Parser herbtext.Parser
 }
@@ -17,11 +22,20 @@ type Param struct {
 //Params param list struct
 type Params []*Param
 
-//Load load dataset form given values
+//Load load dataset form given values.
 func (ps *Params) Load(values herbtext.Set) (Dataset, error) {
 	ds := Dataset{}
 	for _, v := range *ps {
-		data, err := v.Parser(values.Get(v.Source))
+		var value string
+		if v.Constant != "" {
+			value = v.Constant
+		} else {
+			value = values.Get(v.Source)
+		}
+		if v.Required && value == "" {
+			return nil, NewParamMissedError(v.Source)
+		}
+		data, err := v.Parser(value)
 		if err != nil {
 			return nil, err
 		}

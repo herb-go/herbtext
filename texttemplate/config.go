@@ -15,6 +15,11 @@ type ParamConfig struct {
 	Target string
 	//Parser paraser name in herbtext enviroment
 	Parser string
+	//Constant constant value.
+	//Data will use constant instead of loading form source if not empty.
+	Constant string
+	//Required if param is required
+	Required bool
 }
 
 //CreateParam create param with given enviroment.
@@ -30,6 +35,8 @@ func (c *ParamConfig) CreateParam(env herbtext.Environment) (*Param, error) {
 	if l.Target == "" {
 		l.Target = l.Source
 	}
+	l.Required = c.Required
+	l.Constant = c.Constant
 	return l, nil
 }
 
