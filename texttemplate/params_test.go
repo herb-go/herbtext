@@ -52,3 +52,68 @@ func TestParams(t *testing.T) {
 		t.Fatal(output)
 	}
 }
+
+func TestRequired(t *testing.T) {
+	defer texttemplate.UnregisterAll()
+	texttemplate.UnregisterAll()
+	handlebars.Register()
+	defs := &texttemplate.ParamDefinitions{
+		{
+			ParamConfig: texttemplate.ParamConfig{
+				Source:   "test",
+				Parser:   "",
+				Required: true,
+			},
+		},
+	}
+	ps, err := defs.CreateParams(herbtext.DefaultEnvironment())
+	if err != nil {
+		panic(err)
+	}
+	values := herbtext.Map{}
+	_, err = ps.Load(values)
+	if err == nil || texttemplate.GetParamMissedErrorName(err) != "test" {
+		t.Fatal()
+	}
+	values.Set("test", "testvalue")
+	_, err = ps.Load(values)
+	if err != nil {
+		t.Fatal()
+	}
+}
+
+func TestConstant(t *testing.T) {
+	defer texttemplate.UnregisterAll()
+	texttemplate.UnregisterAll()
+	handlebars.Register()
+	defs := &texttemplate.ParamDefinitions{
+		{
+			ParamConfig: texttemplate.ParamConfig{
+				Source:   "test",
+				Parser:   "",
+				Required: true,
+				Constant: "constant",
+			},
+		},
+	}
+	ps, err := defs.CreateParams(herbtext.DefaultEnvironment())
+	if err != nil {
+		panic(err)
+	}
+	values := herbtext.Map{}
+	ds, err := ps.Load(values)
+	if err != nil {
+		panic(err)
+	}
+	if ds["test"] != "constant" {
+		t.Fatal()
+	}
+	values.Set("test", "testvalue")
+	ds, err = ps.Load(values)
+	if err != nil {
+		panic(err)
+	}
+	if ds["test"] != "constant" {
+		t.Fatal()
+	}
+}

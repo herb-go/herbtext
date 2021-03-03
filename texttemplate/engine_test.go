@@ -83,3 +83,14 @@ func TestNull(t *testing.T) {
 		t.Fatal(err)
 	}
 }
+
+func TestParse(t *testing.T) {
+	defer func() {
+		UnregisterAll()
+	}()
+	RegisterNullFactory()
+	tpl, err := Parse("null", "", herbtext.DefaultEnvironment())
+	if tpl != nil || err != nil {
+		t.Fatal(tpl, err)
+	}
+}
